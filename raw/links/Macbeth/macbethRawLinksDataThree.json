@@ -1,0 +1,20 @@
+{
+  "Banquo-Macbeth": 1,
+  "Banquo-LadyMB": 1,
+  "Banquo-Lennox": 1,
+  "Banquo-Ross": 1,
+  "LadyMB-Macbeth": 6,
+  "Lennox-Macbeth": 7,
+  "Macbeth-Ross": 7,
+  "LadyMB-Lennox": 5,
+  "LadyMB-Ross": 5,
+  "Lennox-Ross": 6,
+  "Macbeth-Murderers": 2,
+  "Lennox-Murderers": 2,
+  "Murderers-Ross": 2,
+  "Banquo-Murderers": 1,
+  "Fleance-Murderers": 1,
+  "Banquo-Fleance": 1,
+  "LadyMB-Murderers": 1,
+  "Hecate-Three Witches": 1
+}

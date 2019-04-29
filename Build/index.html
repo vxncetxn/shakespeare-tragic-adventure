@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="Description"
+      content="Data visualisation project utilising digital humanities techniques such as network analysis 
+      on the themes of isolation and communities in Shakespeare's Big Four tragedies"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="styles-mini.css"
+      media="none"
+      onload="if(media!='all')media='all'"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:600,900|Open+Sans:400"
+      rel="stylesheet"
+      media="none"
+      onload="if(media!='all')media='all'"
+    />
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="my-network-node.png"
+      media="none"
+      onload="if(media!='all')media='all'"
+    />
+    <title>Of Isolation & Communities</title>
+    <script defer src="https://d3js.org/d3.v5.min.js"></script>
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js"
+    ></script>
+    <script defer src="index.js"></script>
+  </head>
+  <body>
+    <svg width="1" height="1">
+      <defs id="character-images"></defs>
+    </svg>
+    <div class="main-container">
+      <div class="content">
+        <h1>
+          Of <span class="text-highlight-h1">Isolation</span> &
+          <span class="text-highlight-h1">Communities</span> in Shakespeare's
+          Big Four Tragedies
+        </h1>
+        <h2>
+          Techniques from
+          <span class="text-highlight-h2">Digital Humanities</span>
+        </h2>
+        <!-- <p>
+          This is a visualisation of the characters and their relationships in
+          <i>The Tragedy of Macbeth</i> by William Shakespeare.
+        </p> -->
+        <p>
+          The size of the nodes represent the number of words used and the
+          thickness of the edges represent the frequency of the characters'
+          connections.
+        </p>
+        <p>
+          You can read more about this project and our analysis based on this
+          visualisation in
+          <a href="#" class="link-underline">this report</a> or view the data
+          and source code at <a href="#" class="link-underline">this repo</a>.
+        </p>
+        <form
+          class="select-container"
+          onChange="handleSelectChange(event)"
+          aria-label="Two selects each to choose act and play"
+        >
+          <label for="viz-select">Explore the Tragedies:</label>
+          <select autocomplete="off" aria-label="Select an act">
+            <option value="Overall">All Acts</option>
+            <option value="Act I">Act I</option>
+            <option value="Act II">Act II</option>
+            <option value="Act III">Act III</option>
+            <option value="Act IV">Act IV</option>
+            <option value="Act V">Act V</option>
+          </select>
+          <span style="font-size: 1.6rem;">Of</span>
+          <select autocomplete="off" aria-label="Select a play">
+            <option value="Macbeth">Macbeth</option>
+            <option value="Hamlet">Hamlet</option>
+            <option value="Othello">Othello</option>
+            <option value="King Lear">King Lear</option>
+          </select>
+        </form>
+      </div>
+      <div class="canvas"></div>
+    </div>
+    <div class="footer">
+      Made with <span class="footer-heart">❤</span> As Part of
+      <a
+        href="https://hass.sutd.edu.sg/education/undergraduate-subjects/elective/02-137-introduction-digital-humanities"
+        class="link-underline"
+        >02.137</a
+      >
+    </div>
+  </body>
+</html>
