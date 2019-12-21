@@ -1,5 +1,7 @@
-var width = 760;
-var height = 680;
+var width = window.matchMedia("(max-width: 897px)").matches
+  ? window.innerWidth * 0.9
+  : window.innerWidth * 0.5;
+var height = window.innerHeight * 0.8;
 var color = d3.scaleOrdinal(d3.schemeCategory10);
 
 function sigmoid(t) {
@@ -9,10 +11,8 @@ function sigmoid(t) {
 var visualisation = "macbethActOverall";
 var text = "macbeth";
 var tuning = -2300;
-var collision = 700;
 
 function handleSelectChange() {
-  collision = 700;
   const container = document.querySelector(".select-container").elements;
   switch (container[1].value) {
     case "Macbeth":
@@ -33,71 +33,21 @@ function handleSelectChange() {
   switch (container[0].value) {
     case "Act I":
       visualisation = `${text}ActOne`;
-      if (text === "hamlet" || text === "othello") {
-        tuning = -2800;
-      } else if (text === "kinglear") {
-        tuning = -800;
-      } else {
-        tuning = -2700;
-      }
       break;
     case "Act II":
       visualisation = `${text}ActTwo`;
-      if (text === "othello") {
-        tuning = -3000;
-      } else if (text === "kinglear") {
-        collision = 600;
-        tuning = -600;
-      } else if (text === "macbeth") {
-        tuning = -2700;
-      } else {
-        tuning = -3200;
-      }
       break;
     case "Act III":
       visualisation = `${text}ActThree`;
-      if (text === "kinglear") {
-        collision = 550;
-        tuning = -700;
-      } else if (text === "othello") {
-        tuning = -3000;
-      } else {
-        tuning = -2700;
-      }
       break;
     case "Act IV":
       visualisation = `${text}ActFour`;
-      if (text === "othello") {
-        collision = 600;
-        tuning = -300;
-      } else if (text === "kinglear") {
-        collision = 575;
-        tuning = -150;
-      } else {
-        tuning = -2600;
-      }
       break;
     case "Act V":
       visualisation = `${text}ActFive`;
-      if (text === "kinglear") {
-        collision = 600;
-        tuning = -700;
-      } else if (text === "othello") {
-        tuning = -2400;
-      } else {
-        tuning = -2500;
-      }
       break;
     default:
       visualisation = `${text}ActOverall`;
-      if (text === "kinglear") {
-        collision = 600;
-        tuning = -500;
-      } else if (text === "othello") {
-        tuning = -2400;
-      } else {
-        tuning = -2300;
-      }
       break;
   }
 
@@ -109,10 +59,31 @@ function handleSelectChange() {
   while (characterImages.firstChild) {
     characterImages.removeChild(characterImages.firstChild);
   }
-  makeViz(visualisation, tuning);
+  makeViz(visualisation);
 }
 
-function makeViz(viz, tune) {
+var resizeTimer;
+
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function() {
+    width = window.matchMedia("(max-width: 897px)").matches
+      ? window.innerWidth * 0.9
+      : window.innerWidth * 0.5;
+
+    d3.select(".canvas")
+      .select("svg")
+      .remove();
+    d3.select(".tip").remove();
+    var characterImages = document.querySelector("#character-images");
+    while (characterImages.firstChild) {
+      characterImages.removeChild(characterImages.firstChild);
+    }
+    makeViz(visualisation);
+  }, 250);
+});
+
+function makeViz(viz) {
   d3.json(
     `./processed/${text.charAt(0).toUpperCase() + text.slice(1)}/${viz}.json`
   ).then(function(graph) {
@@ -135,7 +106,7 @@ function makeViz(viz, tune) {
     });
 
     graph.nodes.forEach(node => {
-      const dim = sigmoid(node.freq / maxFreq) * 500 * 2 - 76 + 90;
+      const dim = sigmoid(node.freq / maxFreq) * (width * 0.7) * 2 - 76 + 90;
       var characterPattern = d3
         .select("#character-images")
         .append("pattern")
@@ -156,12 +127,12 @@ function makeViz(viz, tune) {
 
     var graphLayout = d3
       .forceSimulation(graph.nodes)
-      .force("charge", d3.forceManyBody().strength(tune))
+      .force("charge", d3.forceManyBody().strength(tuning))
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force(
         "collision",
         d3.forceCollide().radius(function(d) {
-          return sigmoid(d.freq / maxFreq) * collision;
+          return sigmoid(d.freq / maxFreq) * width;
         })
       )
       .force("x", d3.forceX(width / 2).strength(1))
@@ -183,7 +154,6 @@ function makeViz(viz, tune) {
       .append("svg")
       .attr("width", width)
       .attr("height", height);
-    // .style("border", "1px solid black");
 
     const tip = d3
       .tip()
@@ -212,7 +182,7 @@ function makeViz(viz, tune) {
         return "my-group-" + d.group + " group-" + d.group;
       })
       .attr("r", d => {
-        return sigmoid(d.freq / maxFreq) * 500;
+        return sigmoid(d.freq / maxFreq) * width * 0.7;
       })
       .attr("stroke", function(d) {
         return color(d.group);
@@ -268,11 +238,6 @@ function makeViz(viz, tune) {
       link.call(updateLink);
     }
 
-    function fixna(x) {
-      if (isFinite(x)) return x;
-      return 0;
-    }
-
     function focus(d) {
       const groupNum = d3.select(d3.event.target).datum().group;
       document
@@ -301,25 +266,28 @@ function makeViz(viz, tune) {
     function updateLink(link) {
       link
         .attr("x1", function(d) {
-          return fixna(d.source.x);
+          return d.source.x;
         })
         .attr("y1", function(d) {
-          return fixna(d.source.y);
+          return d.source.y;
         })
         .attr("x2", function(d) {
-          return fixna(d.target.x);
+          return d.target.x;
         })
         .attr("y2", function(d) {
-          return fixna(d.target.y);
+          return d.target.y;
         });
     }
 
     function updateNode(node) {
       node.attr("transform", function(d) {
-        return "translate(" + fixna(d.x) + "," + fixna(d.y) + ")";
+        let radius = sigmoid(d.freq / maxFreq) * width * 0.7;
+        d.x = Math.max(radius, Math.min(width - radius, d.x));
+        d.y = Math.max(radius, Math.min(height - radius, d.y));
+        return "translate(" + d.x + "," + d.y + ")";
       });
     }
   });
 }
 
-makeViz(visualisation, tuning);
+makeViz(visualisation);
