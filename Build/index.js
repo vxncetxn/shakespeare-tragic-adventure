@@ -1,6 +1,7 @@
+var windowWidth = window.innerWidth;
 var width = window.matchMedia("(max-width: 897px)").matches
-  ? window.innerWidth * 0.9
-  : window.innerWidth * 0.5;
+  ? windowWidth * 0.9
+  : windowWidth * 0.5;
 var height = window.innerHeight * 0.8;
 var color = d3.scaleOrdinal(d3.schemeCategory10);
 
@@ -67,19 +68,22 @@ var resizeTimer;
 window.addEventListener("resize", () => {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(function() {
-    width = window.matchMedia("(max-width: 897px)").matches
-      ? window.innerWidth * 0.9
-      : window.innerWidth * 0.5;
+    if (window.innerWidth - windowWidth) {
+      windowWidth = window.innerWidth;
+      width = window.matchMedia("(max-width: 897px)").matches
+        ? windowWidth * 0.9
+        : windowWidth * 0.5;
 
-    d3.select(".canvas")
-      .select("svg")
-      .remove();
-    d3.select(".tip").remove();
-    var characterImages = document.querySelector("#character-images");
-    while (characterImages.firstChild) {
-      characterImages.removeChild(characterImages.firstChild);
+      d3.select(".canvas")
+        .select("svg")
+        .remove();
+      d3.select(".tip").remove();
+      var characterImages = document.querySelector("#character-images");
+      while (characterImages.firstChild) {
+        characterImages.removeChild(characterImages.firstChild);
+      }
+      makeViz(visualisation);
     }
-    makeViz(visualisation);
   }, 250);
 });
 
